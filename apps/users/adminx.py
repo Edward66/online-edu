@@ -3,8 +3,20 @@ __author__ = 'edward'
 __date__ = '2019-04-19 17:35'
 
 import xadmin
+from xadmin import views
 
 from .models import Banner, EmailVerifyRecord
+
+
+class BaseSettings(object):
+    enable_themes = True
+    use_bootswatch = True
+
+
+class GlobalSettings(object):
+    site_title = '我要学编程后台管理系统'
+    site_footer = '我要学编程在线网'
+    menu_style = 'accordion'
 
 
 class EmailVerifyRecordAdmin(object):
@@ -21,3 +33,5 @@ class BannerAdmin(object):
 
 xadmin.site.register(EmailVerifyRecord, EmailVerifyRecordAdmin)
 xadmin.site.register(Banner, BannerAdmin)
+xadmin.site.register(views.BaseAdminView, BaseSettings)
+xadmin.site.register(views.CommAdminView, GlobalSettings)
