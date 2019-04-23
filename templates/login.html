@@ -41,8 +41,8 @@
             <p class="fl hd-tips">慕学在线网，在线学习平台！</p>
             <ul class="fr hd-bar">
                 <li>服务电话：<span>33333333</span></li>
-                <li class="active"><a href="login.html">[登录]</a></li>
-                <li><a href="register.html">[注册]</a></li>
+                <li class="active"><a href="{% url 'login' %}">[登录]</a></li>
+                <li><a href="{% url 'register' %} ">[注册]</a></li>
             </ul>
         </div>
     </div>
@@ -79,7 +79,9 @@
                         <label for="{{ login_form.password.id_for_label }}">{{ login_form.password.label }} </label>
                         {{ login_form.password }}
                     </div>
-                    <div class="error btns login-form-tips" id="jsLoginTips">{{ msg }}</div>
+                    <div class="error btns login-form-tips" id="jsLoginTips">
+                        {% for key,error in login_form.errors.items %}
+                            {{ error }}{% endfor %}{{ msg }}</div>
                     <div class="auto-box marb38">
 
                         <a class="fr" href="forgetpwd.html">忘记密码？</a>
