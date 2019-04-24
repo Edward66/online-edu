@@ -26,8 +26,10 @@ class EmailVerifyRecord(models.Model):
     email = models.EmailField(max_length=50, verbose_name=u'邮箱')
     send_type = models.CharField(max_length=10, choices=(('register', u'注册'), ('forget', u'找回密码')),
                                  verbose_name=u'验证码类型')
+
+    # 如果不去掉括号，就会根据EmailVeryfiRecord编译的时间来生成默认时间。去掉括号了才会根据class实例化的时间来生成
     send_time = models.DateTimeField(
-        default=datetime.now, verbose_name=u'发送时间')  # 如果不去掉括号，就会根据EmailVeryfiRecord编译的时间来生成默认时间。去掉括号了才会根据class实例化的时间来生成
+        default=datetime.now, verbose_name=u'发送时间')
 
     class Meta:
         verbose_name = verbose_name_plural = u'邮箱验证码'

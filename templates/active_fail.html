@@ -6,7 +6,11 @@
 </head>
 <body>
 
-<p>链接失效</p>
+{% if msg %}
+    <p>{{ msg }}</p>
+{% else %}
+    <p>地址有误</p>
+{% endif %}
 
 </body>
 </html>

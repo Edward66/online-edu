@@ -1,4 +1,6 @@
 # _*_ coding: utf-8 _*_
+from datetime import datetime
+
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
@@ -48,6 +50,11 @@ class ActiveUserView(View):
     def get(self, request, active_code):
         record = EmailVerifyRecord.objects.filter(code=active_code).first()
         if record:
+            send_time = record.send_time
+            now = datetime.now()
+            duration = (now - send_time).seconds
+            if duration > 600:
+                return render(request, 'active_fail.html', {'msg': u'链接已超时'})
             email = record.email
             user = UserProfile.objects.get(email=email)
             user.is_active = True
@@ -89,7 +96,7 @@ class ForgetPwdView(View):
     def post(self, request):
         forget_form = ForgetForm(request.POST)
         if forget_form.is_valid():
-            email = request.POST.get('email')
+            email = request.POST.get('email', '')
             send_register_email(email, 'forget')
             return render(request, 'send_success.html')
         else:
@@ -115,6 +122,11 @@ class ResetPwdView(View):
     def get(self, request, reset_code):
         record = EmailVerifyRecord.objects.filter(code=reset_code).first()
         if record:
+            send_time = record.send_time
+            now = datetime.now()
+            duration = (now - send_time).seconds
+            if duration > 600:
+                return render(request, 'active_fail.html', {'msg': u'链接已超时'})
             modify_form = ModifyPwdForm()
             email = record.email
             return render(request, 'password_reset.html', {'email': email, 'modify_form': modify_form})
