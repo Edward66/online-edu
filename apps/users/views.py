@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.shortcuts import render, redirect
 from django.views.generic.base import View
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm
 from .models import UserProfile, EmailVerifyRecord
 from utils.email_send import send_register_email
 
@@ -79,3 +79,44 @@ class RegisterView(View):
             return redirect(reverse('login'))
         else:
             return render(request, 'register.html', {'register_form': register_form})
+
+
+class ForgetPwdView(View):
+    def get(self, request):
+        forget_form = ForgetForm()
+        return render(request, 'forgetpwd.html', {'forget_form': forget_form})
+
+    def post(self, request):
+        forget_form = ForgetForm(request.POST)
+        if forget_form.is_valid():
+            email = request.POST.get('email')
+            send_register_email(email, 'forget')
+            return render(request, 'send_success.html')
+        else:
+            return render(request, 'forgetpwd.html', {'forget_form': forget_form})
+
+
+class ModifyPwdView(View):
+    def post(self, request):
+        modify_form = ModifyPwdForm(request.POST)
+        if modify_form.is_valid():
+            re_password = request.POST.get('re_password', '')
+            email = request.POST.get('email', '')  # TODO：这里有安全漏洞
+            user = UserProfile.objects.get(email=email)
+            user.password = make_password(re_password)
+            user.save()
+            return redirect(reverse('login'))
+        else:
+            email = request.POST.get('email', '')
+            return render(request, 'password_reset.html', {'modify_form': modify_form, 'email': email})
+
+
+class ResetPwdView(View):
+    def get(self, request, reset_code):
+        record = EmailVerifyRecord.objects.filter(code=reset_code).first()
+        if record:
+            modify_form = ModifyPwdForm()
+            email = record.email
+            return render(request, 'password_reset.html', {'email': email, 'modify_form': modify_form})
+        else:
+            return render(request, 'active_fail.html')
