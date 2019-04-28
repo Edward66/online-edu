@@ -1,10 +1,11 @@
 # _*_ encoding:utf-8 _*_
-from pure_pagination import Paginator, EmptyPage, PageNotAnInteger
+from pure_pagination import Paginator, PageNotAnInteger
 
-from django.shortcuts import render
+from django.shortcuts import HttpResponse, render
 from django.views.generic import View
 
 from .models import CourseOrg, CityDict
+from forms import UserAskModelForm
 
 
 class OrgView(View):
@@ -57,3 +58,17 @@ class OrgView(View):
             'rank': rank,
         }
         return render(request, 'org-list.html', context)
+
+
+class AddUserAskView(View):
+    """
+    用户添加咨询
+    """
+
+    def post(self, request):
+        userask_form = UserAskModelForm(request.POST)
+        if userask_form.is_valid():
+            userask_form.save(commit=True)  # 不指定commit=True的话不会真正的保存
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse('{"status":"fail","msg":"添加出错"}', content_type='application/json')

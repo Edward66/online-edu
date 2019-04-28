@@ -61,7 +61,7 @@
                                 <li class="{% if rank == '' %}active{% endif %}"><a
                                         href="?&ct={{ category }}&city={{ city_id }}">全部</a></li>
                                 <li class="{% if rank == 'students' %}active{% endif %}"><a
-                                        href="?rank=students&ct={{ category  }}&city={{ city_id }}">学习人数
+                                        href="?rank=students&ct={{ category }}&city={{ city_id }}">学习人数
                                     &#8595;</a></li>
                                 <li class="{% if rank == 'courses' %}active{% endif %}"><a
                                         href="?rank=courses&ct={{ category }}&city={{ city_id }}">课程数
@@ -134,6 +134,7 @@
             <div class="right companyright">
                 <div class="head">我要学习</div>
                 <form class="rightform" id="jsStayForm">
+                    {% csrf_token %}
                     <div>
                         <img src="{% static 'images/rightform1.png' %}"/>
                         <input type="text" name="name" id="companyName" placeholder="名字" maxlength="25"/>
@@ -148,7 +149,6 @@
                     </div>
                     <p class="error company-tips" id="jsCompanyTips"></p>
                     <input class="btn" type="text" id="jsStayBtn" value="立即咨询 >"/>
-                    <input type='hidden' name='csrfmiddlewaretoken' value='5I2SlleZJOMUX9QbwYLUIAOshdrdpRcy'/>
                 </form>
             </div>
 
@@ -169,3 +169,31 @@
         </div>
     </section>
 {% endblock content %}
+
+{% block custom_js %}
+    <script>
+        $(function () {
+            $('#jsStayBtn').on('click', function () {
+                $.ajax({
+                    cache: false, // cache：true 如果当前请求有缓存的话，直接使用缓存。如果该属性设置为 false，则每次都会向服务器请求
+                    type: "POST",
+                    url: "{% url 'org:add_ask' %}",
+                    data: $('#jsStayForm').serialize(),
+                    async: true,  // 认是true，即为异步方式，如果是false这个ajax请求为同步请求，success之后打印日志。
+                    success: function (data) {
+                        if (data.status == 'success') {
+                            $('#jsStayForm')[0].reset();
+                            alert("提交成功")
+                        } else if (data.status == 'fail') {
+                            $('#jsCompanyTips').html(data.msg)
+                        }
+                    },
+                });
+            });
+        })
+
+    </script>
+
+{% endblock %}
+
+
