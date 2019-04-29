@@ -6,6 +6,7 @@ from django.views.generic import View
 
 from .models import CourseOrg, CityDict
 from forms import UserAskModelForm
+from courses.models import Course
 
 
 class OrgView(View):
@@ -72,3 +73,71 @@ class AddUserAskView(View):
             return HttpResponse('{"status":"success"}', content_type='application/json')
         else:
             return HttpResponse('{"status":"fail","msg":"添加出错"}', content_type='application/json')
+
+
+class OrgHomeView(View):
+    """
+    机构首页
+    """
+
+    def get(self, request, org_id):
+        current_page = 'home'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_courses = course_org.courses.all()[:3]
+        all_teachers = course_org.teachers.all()[:1]
+        context = {
+            'all_courses': all_courses,
+            'all_teachers': all_teachers,
+            'course_org': course_org,
+            'current_page': current_page,
+        }
+        return render(request, 'org-detail-homepage.html', context)
+
+
+class OrgCourseView(View):
+    """
+    机构课程列表页
+    """
+
+    def get(self, request, org_id):
+        current_page = 'course'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_courses = course_org.courses.all()
+        context = {
+            'all_courses': all_courses,
+            'course_org': course_org,
+            'current_page': current_page,
+        }
+        return render(request, 'org-detail-course.html', context)
+
+
+class OrgDescView(View):
+    """
+    机构课程介绍页
+    """
+
+    def get(self, request, org_id):
+        current_page = 'desc'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        context = {
+            'course_org': course_org,
+            'current_page': current_page,
+        }
+        return render(request, 'org-detail-desc.html', context)
+
+
+class OrgTeacherView(View):
+    """
+    机构课程介绍页
+    """
+
+    def get(self, request, org_id):
+        current_page = 'teacher'
+        course_org = CourseOrg.objects.get(id=int(org_id))
+        all_teachers = course_org.teachers.all()
+        context = {
+            'course_org': course_org,
+            'current_page': current_page,
+            'all_teachers': all_teachers,
+        }
+        return render(request, 'org-detail-teachers.html', context)
