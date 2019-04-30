@@ -6,7 +6,6 @@ from django.views.generic import View
 
 from .models import CourseOrg, CityDict
 from forms import UserAskModelForm
-from courses.models import Course
 from operation.models import UserFavorite
 
 
@@ -46,7 +45,7 @@ class OrgView(View):
         except PageNotAnInteger:
             page = 1
 
-        p = Paginator(all_orgs, 3, request=request)  # 此插件可以携带原参数，这样做分页的时候不影响筛选。
+        p = Paginator(all_orgs, 5, request=request)  # 此插件可以携带原参数，这样做分页的时候不影响筛选。
 
         orgs = p.page(page)
 
