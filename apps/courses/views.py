@@ -4,6 +4,7 @@ from pure_pagination import Paginator, PageNotAnInteger
 
 from django.shortcuts import HttpResponse, render
 from django.views.generic import View
+from django.db.models import Q
 
 from .models import Course, CourseResource, Video
 from operation.models import UserFavorite, CourseComments, UserCourse
@@ -20,6 +21,13 @@ class CourseListView(View):
         all_courses = Course.objects.all().order_by('-add_time')
 
         hot_courses = Course.objects.all().order_by('-click_nums')[:3]
+
+        # 课程搜索
+        search_keywords = request.GET.get('keywords', '')
+        if search_keywords:
+            all_courses = all_courses.filter(
+                Q(name__icontains=search_keywords) | Q(desc__icontains=search_keywords) | Q(
+                    detail__icontains=search_keywords))
 
         # 课程排序
         rank = request.GET.get('rank', '')
@@ -110,6 +118,7 @@ class CourseInfoView(LoginRequiredMixin, View):
             'course': course,
             'course_resources': all_resources,
             'related_courses': related_courses,
+
         }
         return render(request, 'course-video.html', context)
 
