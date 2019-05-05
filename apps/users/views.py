@@ -1,17 +1,20 @@
 # _*_ coding: utf-8 _*_
 from datetime import datetime
+import json
 
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.shortcuts import render, redirect
+from django.shortcuts import HttpResponse, render, redirect
 from django.views.generic.base import View
 
-from .forms import LoginForm, RegisterForm, ForgetForm, ModifyPwdForm
+from .forms import (LoginForm, RegisterForm, ForgetForm,
+                    ModifyPwdForm, UploadImageForm, UserInfoModelForm)
 from .models import UserProfile, EmailVerifyRecord
 from utils.email_send import send_register_email
+from utils.mixin_utils import LoginRequiredMixin
 
 
 class CustomBackend(ModelBackend):
@@ -104,10 +107,15 @@ class ForgetPwdView(View):
 
 
 class ModifyPwdView(View):
+    """
+    修改用户密码
+    """
+
     def post(self, request):
         modify_form = ModifyPwdForm(request.POST)
         if modify_form.is_valid():
-            re_password = request.POST.get('re_password', '')
+            re_password = request.POST.get('password2', '')
+            print re_password
             email = request.POST.get('email', '')  # TODO：这里有安全漏洞
             user = UserProfile.objects.get(email=email)
             user.password = make_password(re_password)
@@ -132,3 +140,89 @@ class ResetPwdView(View):
             return render(request, 'password_reset.html', {'email': email, 'modify_form': modify_form})
         else:
             return render(request, 'active_fail.html')
+
+
+class UserInfoView(LoginRequiredMixin, View):
+    """
+    用户个人信息
+    """
+
+    def get(self, request):
+        return render(request, 'usercenter-info.html')
+
+    def post(self, request):
+        user_info_form = UserInfoModelForm(request.POST, instance=request.user)  # 如果不指定实例，它会默认新增加一个用户
+        if user_info_form.is_valid():
+            user_info_form.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse(json.dumps(user_info_form.errors), content_type='application/json')
+
+
+class UploadImageView(LoginRequiredMixin, View):
+    """
+    用户修改头像
+    """
+
+    def post(self, request):
+        image_form = UploadImageForm(request.POST, request.FILES, instance=request.user)
+        if image_form.is_valid():
+            image_form.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse('{"status":"fail"}', content_type='application/json')
+
+
+class UpdatePwdView(LoginRequiredMixin, View):
+    """
+    个人中心修改用户密码
+    """
+
+    def post(self, request):
+        modify_form = ModifyPwdForm(request.POST)
+        if modify_form.is_valid():
+            pwd2 = request.POST.get('password2', '')
+            user = request.user
+            user.password = make_password(pwd2)
+            user.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse(json.dumps(modify_form.errors), content_type='application/json')
+
+
+class SendEmailCodeView(LoginRequiredMixin, View):
+    """
+    发送邮箱验证码
+    """
+
+    def get(self, request):
+        email = request.GET.get('email', '')
+        if UserProfile.objects.filter(email=email):
+            return HttpResponse('{"email":"邮箱已经存在"}', content_type='application/json')
+        send_register_email(email, 'update')
+        return HttpResponse('{"status":"success"}', content_type='application/json')
+
+
+class UpdateEmailView(LoginRequiredMixin, View):
+    """
+    修改个人邮箱
+    """
+
+    def post(self, request):
+        email = request.POST.get('email', '')
+        code = request.POST.get('code', '')
+
+        record = EmailVerifyRecord.objects.filter(email=email, code=code, send_type='update').first()
+        if record:
+            send_time = record.send_time
+            print send_time
+            now = datetime.now()
+            duration = (now - send_time).seconds
+            if duration > 600:
+                return HttpResponse('{"email":"验证码过期了，请重新获取"}', content_type='application/json')
+            user = request.user
+            user.email = email
+            user.save()
+            return HttpResponse('{"status":"success"}', content_type='application/json')
+        else:
+            return HttpResponse('{"email":"验证码出错"}', content_type='application/json')

@@ -27,25 +27,26 @@
                     <!--登录后跳转-->
 
 
-                    {% if request.user.is_authenticated %}
+                  {% if request.user.is_authenticated %}
                         <div class="personal">
                             <dl class="user fr">
-                                <dd>bobby<img class="down fr" src="/static/images/top_down.png"/></dd>
-                                <dt><img width="20" height="20" src="/static/media/image/2016/12/default_big_14.png"/>
+                                <dd>{{ request.user.nickname }}<img class="down fr" src="/static/images/top_down.png"/>
+                                </dd>
+                                <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ request.user.image }}"/>
                                 </dt>
                             </dl>
                             <div class="userdetail">
                                 <dl>
                                     <dt><img width="80" height="80"
-                                             src="/static/media/image/2016/12/default_big_14.png"/>
+                                             src="{{ MEDIA_URL }}{{ request.user.image }}"/>
                                     </dt>
                                     <dd>
                                         <h2>django</h2>
-                                        <p>bobby</p>
+                                        <p>{{ request.user.nickname }}</p>
                                     </dd>
                                 </dl>
                                 <div class="btn">
-                                    <a class="personcenter fl" href="usercenter-info.html">进入个人中心</a>
+                                    <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
                                     <a class="fr" href="/logout/">退出</a>
                                 </div>
                             </div>

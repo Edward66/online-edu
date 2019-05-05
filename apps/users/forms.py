@@ -5,6 +5,8 @@ __date__ = '2019-04-22 15:38'
 from django import forms
 from captcha.fields import CaptchaField
 
+from models import UserProfile
+
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -51,7 +53,7 @@ class ForgetForm(forms.Form):
 
 
 class ModifyPwdForm(forms.Form):
-    password = forms.CharField(
+    password1 = forms.CharField(
         required=True,
         label=u'密   码',
         min_length=6,
@@ -59,19 +61,31 @@ class ModifyPwdForm(forms.Form):
 
     )
 
-    re_password = forms.CharField(
+    password2 = forms.CharField(
         required=True,
         label=u'确 认 密 码',
         min_length=6,
         widget=forms.PasswordInput(attrs={'placeholder': u'6-20为非中文字符'})
     )
 
-    def clean_re_password(self):
-        passwrod = self.cleaned_data.get('password')
-        re_password = self.cleaned_data.get('re_password')
+    def clean_password2(self):
+        passwrod1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
 
-        if passwrod and re_password:
-            if passwrod != re_password:
+        if passwrod1 and password2:
+            if passwrod1 != password2:
                 raise forms.ValidationError('密码不一致')
             else:
                 return self.cleaned_data
+
+
+class UploadImageForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['image']
+
+
+class UserInfoModelForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['nickname', 'gender', 'birthday', 'address', 'mobile']

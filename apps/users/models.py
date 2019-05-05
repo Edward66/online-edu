@@ -24,7 +24,7 @@ class UserProfile(AbstractUser):
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=20, verbose_name=u'验证码')
     email = models.EmailField(max_length=50, verbose_name=u'邮箱')
-    send_type = models.CharField(max_length=10, choices=(('register', u'注册'), ('forget', u'找回密码')),
+    send_type = models.CharField(max_length=10, choices=(('register', u'注册'), ('forget', u'找回密码'), ('update', u'修改邮箱')),
                                  verbose_name=u'验证码类型')
 
     # 如果不去掉括号，就会根据EmailVeryfiRecord编译的时间来生成默认时间。去掉括号了才会根据class实例化的时间来生成
