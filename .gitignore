@@ -126,3 +126,4 @@ cnblog/__pycache__/wsgi.cpython-36.pyc# Created by .ignore support plugin (hsz.m
 # pyc
 *.pyc
 
+!/templates/usercenter-mycourse.html

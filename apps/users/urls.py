@@ -4,7 +4,9 @@ from django.conf.urls import url
 
 from .views import (
     UserInfoView, UploadImageView, UpdatePwdView,
-    SendEmailCodeView, UpdateEmailView
+    SendEmailCodeView, UpdateEmailView, MyCourseView,
+    MyFavOrgView, MyFavTeacherView, MyFavCourseView,
+    MyMessageView,
 )
 
 urlpatterns = [
@@ -22,5 +24,20 @@ urlpatterns = [
 
     # 修改邮箱
     url(r'^update_email/$', UpdateEmailView.as_view(), name='update_email'),
+
+    # 我的课程
+    url(r'^my_course/$', MyCourseView.as_view(), name='my_course'),
+
+    # 我收藏的课程机构
+    url(r'^my_fav/org/$', MyFavOrgView.as_view(), name='myfav_org'),
+
+    # 我收藏的授课讲师
+    url(r'^my_fav/teacher/$', MyFavTeacherView.as_view(), name='myfav_teacher'),
+
+    # 我收藏的课程
+    url(r'^my_fav/course/$', MyFavCourseView.as_view(), name='myfav_course'),
+
+    # 我的消息
+    url(r'^mymessage/$', MyMessageView.as_view(), name='mymessage'),
 
 ]

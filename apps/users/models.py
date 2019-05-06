@@ -20,6 +20,11 @@ class UserProfile(AbstractUser):
     def __str__(self):
         return self.username
 
+    def unread_nums(self):
+        # 用户未读消息的数量
+        from operation.models import UserMessage  # 不能放在开头，否则就会和operation里的model称为循环的import
+        return UserMessage.objects.filter(user=self.id, has_read=True).count()
+
 
 class EmailVerifyRecord(models.Model):
     code = models.CharField(max_length=20, verbose_name=u'验证码')

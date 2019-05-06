@@ -27,7 +27,7 @@
                     <!--登录后跳转-->
 
 
-                  {% if request.user.is_authenticated %}
+                    {% if request.user.is_authenticated %}
                         <div class="personal">
                             <dl class="user fr">
                                 <dd>{{ request.user.nickname }}<img class="down fr" src="/static/images/top_down.png"/>
@@ -51,6 +51,9 @@
                                 </div>
                             </div>
                         </div>
+                        <a href="{% url 'users:mymessage' %}">
+                            <div class="msg-num"><span id="MsgNum">{{ request.user.unread_nums }}</span></div>
+                        </a>
                     {% else %}
                         <a style="color:white" class="fr registerbtn" href="{% url 'register' %}">注册</a>
                         <a style="color:white" class="fr loginbtn" href="{% url 'login' %}">登录</a>
