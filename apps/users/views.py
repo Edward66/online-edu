@@ -4,7 +4,7 @@ import json
 
 from pure_pagination import Paginator, PageNotAnInteger
 
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
 from django.core.urlresolvers import reverse
@@ -52,6 +52,16 @@ class LoginView(View):
             return render(request, 'login.html', {'msg': '用户名或密码错误', 'login_form': login_form})
 
         return render(request, 'login.html', {'login_form': login_form})
+
+
+class LogoutView(View):
+    """
+    用户登出
+    """
+
+    def get(self, request):
+        logout(request)
+        return redirect(reverse('index'))
 
 
 class ActiveUserView(View):
@@ -319,6 +329,12 @@ class MyMessageView(LoginRequiredMixin, View):
 
     def get(self, request):
         all_messages = UserMessage.objects.filter(user=request.user.id)
+
+        # 用户进入个人消息后清空个人消息的记录
+        all_unread_messages = UserMessage.objects.filter(user=request.user.id, has_read=False)
+        for unread_message in all_unread_messages:
+            unread_message.has_read = True
+            unread_message.save()
         # 对课程机构进行分页
         try:
             page = request.GET.get('page', 1)

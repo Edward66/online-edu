@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.views.static import serve
 
 from users.views import (
-    LoginView, RegisterView, ActiveUserView,
+    LoginView, LogoutView, RegisterView, ActiveUserView,
     ForgetPwdView, ResetPwdView, ModifyPwdView
 )
 
@@ -16,6 +16,7 @@ urlpatterns = [
 
     url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
     url('^login/$', LoginView.as_view(), name='login'),
+    url('^logout/$', LogoutView.as_view(), name='logout'),
     url('^register/$', RegisterView.as_view(), name='register'),
 
     url(r'^captcha/', include('captcha.urls')),

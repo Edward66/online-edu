@@ -37,7 +37,8 @@
                         <div class="personal">
 
                             <dl class="user fr">
-                                <dd>{{ request.user.nickname }}<img class="down fr" src="/static/images/top_down.png"/>
+                                <dd>{{ request.user.nickname }}<img class="down fr"
+                                                                    src="{% static 'images/top_down.png' %}"/>
                                 </dd>
                                 <dt><img width="20" height="20" src="{{ MEDIA_URL }}{{ request.user.image }}"/>
                                 </dt>
@@ -54,7 +55,7 @@
                                 </dl>
                                 <div class="btn">
                                     <a class="personcenter fl" href="{% url 'users:user_info' %}">进入个人中心</a>
-                                    <a class="fr" href="/logout/">退出</a>
+                                    <a class="fr" href="{% url 'logout' %}">退出</a>
                                 </div>
                             </div>
                         </div>
@@ -72,7 +73,7 @@
 
             <div class="middle">
                 <div class="wp">
-                    <a href="index.html"><img class="fl" src="../images/logo2.png"/></a>
+                    <a href="{% url 'index' %}"><img class="fl" src="{% static 'images/logo2.png' %}"/></a>
                     <h1>我的慕学网</h1>
                 </div>
             </div>

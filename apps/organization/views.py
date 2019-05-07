@@ -10,6 +10,8 @@ from .models import CourseOrg, CityDict, Teacher
 from forms import UserAskModelForm
 from operation.models import UserFavorite
 
+from utils.inc_dec_fav_num import inc_fav_num, dec_fav_num
+
 
 class OrgView(View):
     """
@@ -90,6 +92,8 @@ class OrgHomeView(View):
     def get(self, request, org_id):
         current_page = 'home'
         course_org = CourseOrg.objects.get(id=int(org_id))
+        course_org.click_num += 1
+        course_org.save()
         all_courses = course_org.courses.all()[:3]
         all_teachers = course_org.teachers.all()[:1]
         # 判断用户是否收藏
@@ -192,6 +196,9 @@ class AddFavView(View):
         if exist_record:
             # 如果记录已经存在，则表示用户取消收藏
             exist_record.delete()
+
+            dec_fav_num(int(fav_id), int(fav_type))
+
             return HttpResponse('{"status":"success","msg":"取消收藏"}', content_type='application/json')
         else:
             user_fav = UserFavorite()
@@ -200,6 +207,8 @@ class AddFavView(View):
                 user_fav.fav_id = int(fav_id)
                 user_fav.fav_type = int(fav_type)
                 user_fav.save()
+                inc_fav_num(int(fav_id), int(fav_type))
+
                 return HttpResponse('{"status":"success","msg":"已收藏"}', content_type='application/json')
             else:
                 return HttpResponse('{"status":"fail","msg":"收藏出错"}', content_type='application/json')
@@ -245,6 +254,8 @@ class TeacherListView(View):
 class TeacherDetailView(View):
     def get(self, request, teacher_id):
         teacher = Teacher.objects.get(id=int(teacher_id))
+        teacher.click_nums += 1
+        teacher.save()
 
         # 讲师排行
         sorted_teacher = Teacher.objects.all().order_by('-click_nums')[:3]
