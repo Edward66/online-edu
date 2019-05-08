@@ -15,7 +15,7 @@ from django.views.generic.base import View
 from courses.models import Course
 from .forms import (LoginForm, RegisterForm, ForgetForm,
                     ModifyPwdForm, UploadImageForm, UserInfoModelForm)
-from .models import UserProfile, EmailVerifyRecord
+from .models import UserProfile, EmailVerifyRecord, Banner
 from operation.models import UserCourse, UserFavorite, UserMessage
 from organization.models import CourseOrg, Teacher
 from utils.email_send import send_register_email
@@ -349,3 +349,23 @@ class MyMessageView(LoginRequiredMixin, View):
 
         }
         return render(request, 'usercenter-message.html', context)
+
+
+class IndexView(View):
+    """
+    幕学在线网首页
+    """
+
+    def get(self, request):
+        # 取出轮播图
+        all_banners = Banner.objects.all().order_by('index')
+        courses = Course.objects.filter(is_banner=False)[:6]
+        banner_courses = Course.objects.filter(is_banner=True)[:3]
+        course_orgs = CourseOrg.objects.all()[:15]
+        context = {
+            'all_banners': all_banners,
+            'courses': courses,
+            'banner_courses': banner_courses,
+            'course_orgs': course_orgs,
+        }
+        return render(request, 'index.html', context)

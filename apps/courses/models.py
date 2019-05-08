@@ -23,6 +23,7 @@ class Course(models.Model):
     tag = models.CharField(default='', verbose_name=u'课程标签', max_length=10)
     need_know = models.CharField(default='', max_length=300, verbose_name=u'课程须知')
     teacher_tell = models.CharField(default='', max_length=300, verbose_name=u'老师告诉你能学到什么')
+    is_banner = models.BooleanField(default=False, verbose_name=u'是否轮播')
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u'添加时间')
 
     class Meta:

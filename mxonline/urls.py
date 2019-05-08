@@ -3,18 +3,17 @@ import xadmin
 
 from django.conf.urls import url, include
 from django.conf import settings
-from django.views.generic import TemplateView
 from django.views.static import serve
 
 from users.views import (
-    LoginView, LogoutView, RegisterView, ActiveUserView,
-    ForgetPwdView, ResetPwdView, ModifyPwdView
+    IndexView, LoginView, LogoutView, RegisterView, ActiveUserView,
+    ForgetPwdView, ResetPwdView, ModifyPwdView,
 )
 
 urlpatterns = [
     url(r'^xadmin/', xadmin.site.urls),
 
-    url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
+    url(r'^$', IndexView.as_view(), name='index'),
     url('^login/$', LoginView.as_view(), name='login'),
     url('^logout/$', LogoutView.as_view(), name='logout'),
     url('^register/$', RegisterView.as_view(), name='register'),
