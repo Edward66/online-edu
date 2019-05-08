@@ -9,7 +9,7 @@ from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
 from django.core.urlresolvers import reverse
 from django.db.models import Q
-from django.shortcuts import HttpResponse, render, redirect
+from django.shortcuts import HttpResponse, render, redirect, render_to_response
 from django.views.generic.base import View
 
 from courses.models import Course
@@ -369,3 +369,17 @@ class IndexView(View):
             'course_orgs': course_orgs,
         }
         return render(request, 'index.html', context)
+
+
+def page_not_found(request):
+    # 全局404处理函数
+    response = render_to_response('404.html', {})
+    response.status_code = 404
+    return response
+
+
+def page_error(request):
+    # 全局404处理函数
+    response = render_to_response('500.html', {})
+    response.status_code = 500
+    return response

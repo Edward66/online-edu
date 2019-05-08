@@ -33,7 +33,12 @@ urlpatterns = [
     # 配置上传文件的访问处理函数
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
+    url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+
     # 用户相关
     url(r'^users/', include('users.urls', namespace='users')),
-
 ]
+
+# 全局404、500页面配置
+hanlder404 = 'users.views.page_not_found'
+hanlder500 = 'users.views.page_error'
