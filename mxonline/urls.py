@@ -7,7 +7,7 @@ from django.views.static import serve
 
 from users.views import (
     IndexView, LoginView, LogoutView, RegisterView, ActiveUserView,
-    ForgetPwdView, ResetPwdView, ModifyPwdView,
+    ForgetPwdView, ResetPwdView, ModifyPwdView
 )
 
 urlpatterns = [
@@ -33,10 +33,14 @@ urlpatterns = [
     # 配置上传文件的访问处理函数
     url(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
 
-    url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
+    # url(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
 
     # 用户相关
     url(r'^users/', include('users.urls', namespace='users')),
+
+    # 富文本相关url
+    url(r'^ueditor/', include('DjangoUeditor.urls')),
+
 ]
 
 # 全局404、500页面配置

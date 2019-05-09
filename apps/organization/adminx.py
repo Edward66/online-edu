@@ -16,14 +16,15 @@ class CityDictAdmin(object):
 class CourseOrgAdmin(object):
     list_display = ['name', 'desc', 'click_num', 'fav_nums', 'address', 'city', 'add_time']
     search_filed = ['name', 'desc', 'address', 'city']
-    list_filter = ['name', 'desc', 'click_num', 'fav_nums',  'address', 'city', 'add_time']
+    list_filter = ['name', 'desc', 'click_num', 'fav_nums', 'address', 'city', 'add_time']
+    relfield_style = 'fk-ajax'  # 不会把数据一次性重载出来
 
 
 class TeacherAdmin(object):
-    list_display = ['org', 'name', 'work_years', 'work_company', 'work_position', 'teaching_char', 'click_num',
+    list_display = ['org', 'name', 'work_years', 'work_company', 'work_position', 'feature', 'click_nums',
                     'fav_nums', 'add_time']
     search_filed = ['org', 'name', 'work_company']
-    list_filter = ['org__name', 'name', 'work_years', 'work_company', 'work_position', 'teaching_char', 'click_num',
+    list_filter = ['org__name', 'name', 'work_years', 'work_company', 'work_position', 'feature', 'click_nums',
                    'fav_nums', 'add_time']
 
 

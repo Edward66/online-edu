@@ -44,7 +44,7 @@
                                 </li>
                                 <li><span class="pram word3">课程类别：</span><span title="">{{ course.category }}</span>
                                 </li>
-                                <li class="piclist"><span class="pram word4">学习用户：</span>
+                                <li class="piclist"><span class="pram word4">学习用户：  </span>
 
                                     {% for user_course in course.get_learn_user %}
                                         <span class="pic"><img width="40" height="40" src="
@@ -133,7 +133,7 @@
                         </ul>
                     </div>
                     <div class="tab_cont tab_cont1">
-                        {{ course.detail }}
+                        {{ course.detail|safe }}
                     </div>
 
                     <div class="tab_cont tab_cont2">

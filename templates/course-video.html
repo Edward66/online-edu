@@ -74,14 +74,14 @@
                             {% for lesson in course.get_course_lesson %}
                                 <div class="chapter chapter-active">
                                     <h3>
-                                        <strong><i class="state-expand"></i>{{ lesson.name }}</strong>
+                                        <strong><i class="state-expand"></i>{{ lesson.name }} ({{ lesson.learn_times }}分钟)</strong>
                                     </h3>
                                     <ul class="video">
                                         {% for video in lesson.get_lesson_video %}
                                             <li>
                                                 <a target="_blank" href='{% url 'course:video_play' video.id %}'
                                                    class="J-media-item studyvideo">
-                                                    {{ video.name }} ({{ video.learn_times }})
+                                                    {{ video.name }} ({{ video.learn_times }}分钟)
                                                     <i class="study-state"></i>
                                                 </a>
                                             </li>
