@@ -113,7 +113,7 @@ class CourseInfoView(LoginRequiredMixin, View):
         course_ids = [user_course.course.id for user_course in all_user_courses]
 
         # 获取学过该用户的学过其他的所有课程
-        related_courses = Course.objects.filter(id__in=course_ids).order_by('-click_nums')[:5]
+        related_courses = Course.objects.filter(id__in=course_ids).order_by('-click_nums').exclude(id=course.id)[:4]
 
         all_resources = CourseResource.objects.filter(course=course)
         context = {
@@ -128,10 +128,21 @@ class CourseInfoView(LoginRequiredMixin, View):
 class CommentView(LoginRequiredMixin, View):
     def get(self, request, course_id):
         course = Course.objects.get(id=int(course_id))
-        all_comments = CourseComments.objects.all()
+        all_comments = CourseComments.objects.filter(course=course).order_by('-add_time')
+        all_resources = CourseResource.objects.filter(course=course)
+
+        #  相关课程
+        user_courses = UserCourse.objects.filter(course=course)
+        user_ids = [user_course.user.id for user_course in user_courses]
+        all_user_courses = UserCourse.objects.filter(user_id__in=user_ids)
+        course_ids = [user_course.course.id for user_course in all_user_courses]
+        related_courses = Course.objects.filter(id__in=course_ids).order_by('-click_nums').exclude(id=course.id)[:4]
+
         context = {
             'course': course,
             'all_comments': all_comments,
+            'related_courses': related_courses,
+            'all_resources': all_resources,
         }
         return render(request, 'course-comment.html', context)
 
