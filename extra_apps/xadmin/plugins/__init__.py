@@ -1,3 +1,4 @@
+
 PLUGINS = (
     'actions',
     'filters',
@@ -21,15 +22,14 @@ PLUGINS = (
     'multiselect',
     'themes',
     'aggregation',
-    'mobile',
+    # 'mobile',
     'passwords',
     'sitemenu',
     'language',
     'quickfilter',
     'sortablelist',
     'importexport',
-    'ueditor',
-    'excel',
+    'ueditor'
 )
 
 

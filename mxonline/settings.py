@@ -35,6 +35,7 @@ ALLOWED_HOSTS = ['*']
 # 自定义authenticate
 AUTHENTICATION_BACKENDS = (
     'users.views.CustomBackend',
+    'django.contrib.auth.backends.AllowAllUsersModelBackend'
 )
 
 INSTALLED_APPS = [
@@ -60,7 +61,7 @@ INSTALLED_APPS = [
 
 AUTH_USER_MODEL = 'users.UserProfile'
 
-MIDDLEWARE_CLASSES = [
+MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -83,7 +84,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'django.core.context_processors.media'  # 配置之后会自动将MEDIA_URL注册到HTML中
+                # 'django.core.context_processors.media',  # Django新版本改为下面的了
+                'django.template.context_processors.media',  # 配置之后会自动将MEDIA_URL注册到HTML中
             ],
         },
     },
@@ -156,5 +158,3 @@ EMAIL_USE_SSL = True
 # 上传文件设置
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')

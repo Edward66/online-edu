@@ -5,7 +5,7 @@ __date__ = '2019-04-22 15:38'
 from django import forms
 from captcha.fields import CaptchaField
 
-from models import UserProfile
+from .models import UserProfile
 
 
 class LoginForm(forms.Form):

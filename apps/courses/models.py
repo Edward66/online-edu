@@ -11,12 +11,14 @@ from organization.models import CourseOrg, Teacher
 
 
 class Course(models.Model):
-    course_org = models.ForeignKey(CourseOrg, verbose_name=u'机构课程', null=True, blank=True, related_name='courses')
+    course_org = models.ForeignKey(CourseOrg, verbose_name=u'机构课程', null=True, blank=True, related_name='courses',
+                                   on_delete=models.CASCADE)
     name = models.CharField(max_length=50, verbose_name=u'课程名')
     desc = models.CharField(max_length=50, verbose_name=u'课程描述')
     detail = UEditorField(verbose_name=u"课程详情", width=600, height=300, imagePath="courses/ueditor/",
                           filePath="courses/ueditor/", default='')
-    teacher = models.ForeignKey(Teacher, verbose_name=u'讲师', blank=True, null=True, related_name='courses')
+    teacher = models.ForeignKey(Teacher, verbose_name=u'讲师', blank=True, null=True, related_name='courses',
+                                on_delete=models.CASCADE)
     degree = models.CharField(max_length=2, choices=(('cj', '初级'), ('zj', u'中级'), ('gj', u'高级')), verbose_name=u'难度')
     learn_times = models.IntegerField(default=0, verbose_name=u'学习时长(分钟显示)')
     students = models.IntegerField(default=0, verbose_name=u'学习人数')
@@ -62,7 +64,7 @@ class BannerCourse(Course):
 
 
 class Lesson(models.Model):
-    course = models.ForeignKey(Course, verbose_name=u'课程', related_name='lessons')
+    course = models.ForeignKey(Course, verbose_name=u'课程', related_name='lessons', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name=u'章节名称')
     learn_times = models.IntegerField(default=0, verbose_name=u"学习时长(分钟数)")
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u'添加时间')
@@ -79,7 +81,7 @@ class Lesson(models.Model):
 
 
 class Video(models.Model):
-    lesson = models.ForeignKey(Lesson, verbose_name=u'章节', related_name='videos')
+    lesson = models.ForeignKey(Lesson, verbose_name=u'章节', related_name='videos', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name=u'视频名')
     url = models.CharField(max_length=200, default='', verbose_name=u'访问地址')
     learn_times = models.IntegerField(default=0, verbose_name=u'学习时长(分钟显示)')
@@ -93,7 +95,7 @@ class Video(models.Model):
 
 
 class CourseResource(models.Model):
-    course = models.ForeignKey(Course, verbose_name=u'课程', related_name='resource')
+    course = models.ForeignKey(Course, verbose_name=u'课程', related_name='resource', on_delete=models.CASCADE)
     name = models.CharField(max_length=100, verbose_name=u'名称')
     download = models.FileField(max_length=100, upload_to='course/resource/%Y/%m', verbose_name=u'资源文件')
     add_time = models.DateTimeField(default=datetime.now, verbose_name=u'添加时间')

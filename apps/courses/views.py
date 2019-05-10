@@ -69,7 +69,7 @@ class CourseDetailView(View):
         has_fav_course = False
         has_fav_org = False
 
-        if request.user.is_authenticated():
+        if request.user.is_authenticated:
             if UserFavorite.objects.filter(user=request.user, fav_id=course.id, fav_type=1):
                 has_fav_course = True
             if UserFavorite.objects.filter(user=request.user, fav_id=course.course_org.id, fav_type=2):
@@ -153,7 +153,7 @@ class AddCommentView(View):
     """
 
     def post(self, request):
-        if not request.user.is_authenticated():
+        if not request.user.is_authenticate:
             return HttpResponse('{"status":"fail","msg":"用户未登陆"}', content_type='application/json')
         course_id = request.POST.get('course_id', 0)
         comments = request.POST.get('comments', '')

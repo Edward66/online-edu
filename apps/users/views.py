@@ -7,7 +7,7 @@ from pure_pagination import Paginator, PageNotAnInteger
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.backends import ModelBackend
 from django.contrib.auth.hashers import make_password
-from django.core.urlresolvers import reverse
+from django.shortcuts import reverse
 from django.db.models import Q
 from django.shortcuts import HttpResponse, render, redirect, render_to_response
 from django.views.generic.base import View
@@ -23,8 +23,14 @@ from utils.mixin_utils import LoginRequiredMixin
 
 
 class CustomBackend(ModelBackend):
+    """
+    实现用户名邮箱均可登录
+    继承ModelBackend类，因为它有方法authenticate，可点进源码查看
+    """
+
     def authenticate(self, username=None, password=None, **kwargs):
         try:
+            # 不希望用户存在两个，get只能有一个。两个是get失败的一种原因 Q为使用并集查询
             user = UserProfile.objects.get(Q(username=username) | Q(email=username))  # 支持用户名和邮箱登陆
             if user.check_password(password):  # 把明文的密码加密，因为数据库里储存的密码是密文的
                 return user
@@ -137,7 +143,8 @@ class ModifyPwdView(View):
         modify_form = ModifyPwdForm(request.POST)
         if modify_form.is_valid():
             re_password = request.POST.get('password2', '')
-            print re_password
+            print
+            re_password
             email = request.POST.get('email', '')  # TODO：这里有安全漏洞
             user = UserProfile.objects.get(email=email)
             user.password = make_password(re_password)
@@ -237,7 +244,8 @@ class UpdateEmailView(LoginRequiredMixin, View):
         record = EmailVerifyRecord.objects.filter(email=email, code=code, send_type='update').first()
         if record:
             send_time = record.send_time
-            print send_time
+            print
+            send_time
             now = datetime.now()
             duration = (now - send_time).seconds
             if duration > 600:
